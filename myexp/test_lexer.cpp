@@ -121,6 +121,22 @@ void testPrimitiveToken()
     END_CHECK_ERROR;
 }
 
+void testLongToken()
+{
+    string code =
+        "111+2222+12345";
+    FIRST_LINE(code, 1);
+        FIRST_TOKEN(5);
+        TOKEN(1, 1, "111", CodeTokenType::Num);
+        TOKEN(1, 4, "+", CodeTokenType::Add);
+        TOKEN(1, 5, "2222", CodeTokenType::Num);
+        TOKEN(1, 9, "+", CodeTokenType::Add);
+        TOKEN(1, 10, "12345", CodeTokenType::Num);
+        LAST_TOKEN;
+    NEXT_LINE;
+    LAST_LINE;
+}
+
 void testCodeFileStructure()
 {
     string code =
@@ -224,6 +240,7 @@ int main()
 {
     testEmptyFile();
     testPrimitiveToken();
+    testLongToken();
     testCodeFileStructure();
     testBlank();
     testError();
