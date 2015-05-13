@@ -4,34 +4,45 @@ namespace dyb
 {
     using std::string;
 
-    Token::List LexicalAnalysis(const string & codeString, LexerError::List & errors)
+    CodeFile CodeFile::Parse(const string & codeString)
     {
+        CodeFile codeFile;
+
         enum class State
         {
             Begin,
             InNumber,
         };
 
-        Token::List tokenList; // only support one row now
-        int row = 1, column = 1;
-        auto addToken = [&](const string value, TokenType type){
-            Token token;
-            token.row = row;
-            token.column = column;
-            token.value = value;
-            token.type = type;
-            tokenList.push_back(token);
-        };
-        auto addError = [&](const string errorMsg){
-            LexerError error;
-            error.row = row;
-            error.column = column;
-            error.errorMsg = errorMsg;
-            errors.push_back(error);
-        };
+        size_t row = 1;
         State state = State::Begin;
         auto charIt = std::begin(codeString);
+        auto rowBegin = std::begin(codeString);
         auto head = std::end(codeString);
+
+        auto addToken = [&](const string value, CodeTokenType type){
+            auto tokenHead = head == std::end(codeString) ? charIt : head;
+            CodeToken token;
+            token.row = row;
+            token.column = distance(rowBegin, tokenHead) + 1;
+            token.value = value;
+            token.type = type;
+            if (row > codeFile.lines.size())
+                codeFile.lines.push_back(CodeLine());
+            codeFile.lines.back().tokens.push_back(token);
+        };
+        auto addError = [&](const string value, const string errorMsg){
+            auto tokenHead = head == std::end(codeString) ? charIt : head;
+            CodeToken token;
+            token.row = row;
+            token.column = distance(rowBegin, tokenHead) + 1;
+            token.value = value;
+            token.type = CodeTokenType::UnKnown;
+            LexerError error = {
+                token, errorMsg
+            };
+            codeFile.errors.push_back(error);
+        };
 
         while (true)
         {
@@ -41,14 +52,18 @@ namespace dyb
             case State::Begin:
                 switch (c)
                 {
+                case '\n':
+                    row++;
+                    rowBegin = std::next(charIt);
+                    break;
                 case '\0':
                 case ' ':
                     break;
                 case '+':
-                    addToken(string(1, c), TokenType::ADD);
+                    addToken(string(1, c), CodeTokenType::Add);
                     break;
                 case '*':
-                    addToken(string(1, c), TokenType::MUL);
+                    addToken(string(1, c), CodeTokenType::Mul);
                     break;
                 default:
                     if ('0' <= c && c <= '9')
@@ -58,7 +73,7 @@ namespace dyb
                     }
                     else
                     {
-                        addError("illegal char found: '" + string(1, c) + "'");
+                        addError(string(1, c), "illegal char found: '" + string(1, c) + "'");
                         // ignore this char and go on from State::Begin
                     }
                     break;
@@ -69,25 +84,19 @@ namespace dyb
                 {
                     // go on
                 }
-                else if (c == ' ' || c == '\n' || c == '\0')
-                {
-                    addToken(string(head, charIt), TokenType::NUM);
-                    state = State::Begin;
-                    head = std::end(codeString);
-                }
                 else
                 {
-                    addError("expected digit but '" + string(1, c) + "' found");
-                    // ignore this char and go on from State::Begin
+                    --charIt;
+                    addToken(string(head, std::next(charIt)), CodeTokenType::Num);
                     state = State::Begin;
+                    head = std::end(codeString);
                 }
                 break;
             } // end of switch
             if (charIt == std::end(codeString)) break;
             ++charIt;
-            ++column;
         }
 
-        return tokenList;
+        return codeFile;
     }
 }

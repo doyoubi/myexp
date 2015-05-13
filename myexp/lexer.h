@@ -6,33 +6,48 @@
 
 namespace dyb
 {
-    enum class TokenType
+    enum class CodeTokenType
     {
-        ADD,
-        MUL,
-        NUM,
+        Add,
+        Mul,
+        Num,
+        UnKnown,
     };
 
-    struct Token
+    struct CodeToken
     {
-        typedef std::vector<Token> List;
+        typedef std::vector<CodeToken> List;
 
         int         row = -1;
         int         column = -1;
         std::string value;
-        TokenType   type;
+        CodeTokenType   type;
     };
 
     struct LexerError
     {
         typedef std::vector<LexerError> List;
 
-        int         row = -1;
-        int         column = -1;
+        CodeToken token;
         std::string errorMsg;
     };
 
-    Token::List LexicalAnalysis(const std::string & codeString, LexerError::List & errors);
+    struct CodeLine
+    {
+        typedef std::vector<CodeLine> List;
+
+        CodeToken::List tokens;
+    };
+
+    struct CodeFile
+    {
+        typedef std::vector<CodeFile> List;
+
+        CodeLine::List lines;
+        LexerError::List errors;
+
+        static CodeFile Parse(const std::string & codeString);
+    };
 
 }
 
