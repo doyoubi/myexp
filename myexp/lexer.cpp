@@ -31,7 +31,7 @@ namespace dyb
                 codeFile.lines.push_back(CodeLine());
             codeFile.lines.back().tokens.push_back(token);
         };
-        auto addError = [&](const string value, const string errorMsg){
+        auto addError = [&](CompileErrorType errorType, const string value, const string errorMsg){
             auto tokenHead = head == std::end(codeString) ? charIt : head;
             CodeToken token;
             token.row = row;
@@ -39,7 +39,7 @@ namespace dyb
             token.value = value;
             token.type = CodeTokenType::UnKnown;
             LexerError error = {
-                token, errorMsg
+                errorType, token, errorMsg
             };
             codeFile.errors.push_back(error);
         };
@@ -73,7 +73,7 @@ namespace dyb
                     }
                     else
                     {
-                        addError(string(1, c), "illegal char found: '" + string(1, c) + "'");
+                        addError(CompileErrorType::Lexer_UnexpectedChar, string(1, c), "illegal char found: '" + string(1, c) + "'");
                         // ignore this char and go on from State::Begin
                     }
                     break;

@@ -78,6 +78,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="compile_error.h" />
     <ClInclude Include="lexer.h" />
     <ClInclude Include="test.h" />
   </ItemGroup>

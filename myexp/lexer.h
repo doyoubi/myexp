@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+#include "compile_error.h"
+
 namespace dyb
 {
     enum class CodeTokenType
@@ -28,6 +30,7 @@ namespace dyb
     {
         typedef std::vector<LexerError> List;
 
+        CompileErrorType errorType;
         CodeToken token;
         std::string errorMsg;
     };
