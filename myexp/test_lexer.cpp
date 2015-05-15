@@ -236,13 +236,13 @@ void testError()
     END_CHECK_ERROR;
 }
 
-int main()
-{
-    testEmptyFile();
-    testPrimitiveToken();
-    testLongToken();
-    testCodeFileStructure();
-    testBlank();
-    testError();
-    return 0;
-}
+//int main()
+//{
+//    testEmptyFile();
+//    testPrimitiveToken();
+//    testLongToken();
+//    testCodeFileStructure();
+//    testBlank();
+//    testError();
+//    return 0;
+//}

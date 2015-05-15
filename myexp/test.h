@@ -7,7 +7,7 @@
 namespace dyb
 {
 
-    void test_assert(bool expression, const std::string & file, size_t line)
+    inline void test_assert(bool expression, const std::string & file, size_t line)
     {
         if (expression) return;
         std::cout << "test fail : " << file << " line " << line << std::endl;
