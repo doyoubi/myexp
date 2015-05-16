@@ -85,6 +85,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lexer.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="parser.cpp" />
     <ClCompile Include="test_lexer.cpp" />
     <ClCompile Include="test_parser.cpp" />
